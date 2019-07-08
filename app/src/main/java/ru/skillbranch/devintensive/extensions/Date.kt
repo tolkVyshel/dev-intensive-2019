@@ -28,8 +28,29 @@ fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
 
 
 }
-public fun Date.humanizeDiff(date: Date = Date()): String {
-    TODO()
+fun Date.humanizeDiff(date: Date = Date()): String {
+
+
+    var humanizeInterval: String
+
+    val interval = this.time - date.time
+    println("time now ${Date().time}")
+    println("time old ${date.time}")
+    println("interval $interval")
+
+    humanizeInterval =  when (interval) {
+        in 0 .. 1 -> "только что"
+        in 1 until 45 -> "несколько секунд назад"
+        in 45 until 75 -> "минуту назад"
+        in 75 until (45*60) -> "(45*60) минут назад"
+
+
+        else -> "хз"
+    }
+
+
+
+    return humanizeInterval
 }
 
 
