@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.models
 
+import android.util.Log
+
 class Bender (var status: Status = Status.NORMAL, var question: Question = Question.NAME){
 
     fun askQuestion():String = when(question){
@@ -11,16 +13,40 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
         Question.IDLE -> Question.IDLE.question
     }
 
-    fun listenAnswer(answer:String):Pair<String, Triple<Int, Int, Int>>{
-        return if (question.answer.contains(answer)) {
-            question = question.nextQuestion()
-            "Отлично - ты справился\n${question.question}" to status.color
-        }
-        else {
-            status = status.nextStatus()
+    fun listenAnswer(answer:String, intErrorAnswer: Int):Triple<String, Triple<Int, Int, Int>, Int>{
+        var returnIntErrorAnswer = intErrorAnswer
+        lateinit var   tri :Triple<String, Triple<Int, Int, Int>, Int> //= Triple("", status.color, returnIntErrorAnswer)
 
-            "Это неправильный ответ\n${question.question}" to status.color
+            if (question.answer.contains(answer)) {
+            question = question.nextQuestion()
+                Log.d("M_Bender", "returnIntErrorAnswer: $returnIntErrorAnswer")
+                tri=  Triple("Отлично - ты справился\n${question.question}", second = status.color,  third = returnIntErrorAnswer)
+
         }
+      else {
+            returnIntErrorAnswer ++
+            if (returnIntErrorAnswer > 3) {
+                Log.d("M_Bender", "returnIntErrorAnswer: $returnIntErrorAnswer")
+                returnIntErrorAnswer = 0
+                resetStatus()
+
+                tri=    Triple("Это неправильный ответ. Давай все по новой\n${question.question}", second = status.color, third = returnIntErrorAnswer)
+            }
+            else{
+            status = status.nextStatus()
+                Log.d("M_Bender", "returnIntErrorAnswer: $returnIntErrorAnswer")
+
+                tri=    Triple("Это неправильный ответ\n${question.question}", second = status.color, third = returnIntErrorAnswer)}
+        }
+
+
+
+        return tri
+    }
+
+     fun resetStatus() {
+        status = Status.NORMAL
+        question = Question.NAME
     }
 
     enum class Status(val color: Triple<Int, Int, Int>){
@@ -55,7 +81,7 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
         SERIAL("Мой серийный номер?", listOf("2716057")){
             override fun nextQuestion(): Question = IDLE
         },
-        IDLE("На этом всё, вопросов больше нет", listOf()){
+        IDLE("На этом все, вопросов больше нет", listOf()){
             override fun nextQuestion(): Question = IDLE
         };
 
