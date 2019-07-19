@@ -15,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.skillbranch.devintensive.extensions.hideKeyboard
 import ru.skillbranch.devintensive.models.Bender
+import android.R.attr.bottom
+import android.graphics.Rect
+import ru.skillbranch.devintensive.extensions.isKeyboardClosed
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var benderImage: ImageView
@@ -58,6 +62,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 false
             }
         }
+        //  add to onCreate method for Activity.isKeyboardOpen Activity.isKeyboardClosed
+        val rectgle = Rect()
+        val window = window
+        window.decorView.getWindowVisibleDisplayFrame(rectgle)
+        var sheight = rectgle.bottom
+//
+
+       /*Log.d("M_MainActivity", "${this.isKeyboardClosed(sheight, window)}")*/
+
     }
 
     override fun onRestart() {
@@ -99,6 +112,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val(r, g, b) = color
             benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
             textTxt.text = phase
+
         }
     }
 
