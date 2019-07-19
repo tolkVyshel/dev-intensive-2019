@@ -17,7 +17,27 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
         var returnIntErrorAnswer = intErrorAnswer
         lateinit var   tri :Triple<String, Triple<Int, Int, Int>, Int> //= Triple("", status.color, returnIntErrorAnswer)
 
-            if (question.answer.contains(answer)) {
+
+        if(!question.validationAnswer(answer)){
+            val error_msg = when (question) {
+                Question.NAME -> "Имя должно начинаться с заглавной буквы\n${question.question}"
+
+                Question.PROFESSION -> "Профессия должна начинаться со строчной буквы\n${question.question}"
+                Question.MATERIAL -> "Материал не должен содержать цифр\n${question.question}"
+                Question.BDAY -> "Год моего рождения должен содержать только цифры\n${question.question}"
+                Question.SERIAL -> "Серийный номер содержит только цифры, и их 7\n${question.question}"
+                Question.IDLE ->  "На этом все, вопросов больше нет"
+            }
+                Log.d("M_Bender", "eroor validation: $error_msg")
+            return Triple(error_msg, status.color, returnIntErrorAnswer)
+
+        }
+
+
+        Log.d("M_Bender", "$question - $answer")
+
+
+            if (question.answer.contains(answer.toLowerCase())) {
             question = question.nextQuestion()
                 Log.d("M_Bender", "returnIntErrorAnswer: $returnIntErrorAnswer")
                 tri=  Triple("Отлично - ты справился\n${question.question}", second = status.color,  third = returnIntErrorAnswer)
@@ -68,23 +88,62 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
     enum class Question(val question: String, val answer: List<String>){
         NAME("Как меня зовут?", listOf("бендер", "bender")) {
             override fun nextQuestion(): Question = PROFESSION
+            override fun validationAnswer(userAnswer:String): Boolean {
+                Log.d("M_Bender", "validationAnswer: $answer")
+                val check = userAnswer.trim().firstOrNull()?.isUpperCase()
+
+                return !(check == false ||  check == null)
+            }
         },
         PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")){
             override fun nextQuestion(): Question = MATERIAL
+            override fun validationAnswer(userAnswer:String): Boolean {
+                Log.d("M_Bender", "validationAnswer: $answer")
+                val check = userAnswer.trim().firstOrNull()?.isLowerCase()
+
+                return !(check == false ||  check == null)
+            }
         },
         MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "iron", "wood", "metal")){
             override fun nextQuestion(): Question = BDAY
+            override fun validationAnswer(userAnswer:String): Boolean {
+                Log.d("M_Bender", "validationAnswer: $answer")
+
+                return !userAnswer.trim().contains(regex = Regex("[0-9]"))
+            }
         },
         BDAY("Когда меня создали?", listOf("2993")){
             override fun nextQuestion(): Question = SERIAL
+            override fun validationAnswer(userAnswer:String): Boolean {
+                Log.d("M_Bender", "validationAnswer: $answer")
+                val regex = Regex(pattern = """\d+""")
+                regex.matches(userAnswer.trim())
+
+                return regex.matches(userAnswer.trim())
+
+            }
         },
         SERIAL("Мой серийный номер?", listOf("2716057")){
             override fun nextQuestion(): Question = IDLE
+            override fun validationAnswer(userAnswer:String): Boolean {
+                Log.d("M_Bender", "validationAnswer: $answer")
+                val regex = Regex(pattern = """\d{7}""")
+                regex.matches(userAnswer.trim())
+
+                return regex.matches(userAnswer.trim())
+
+            }
         },
         IDLE("На этом все, вопросов больше нет", listOf()){
             override fun nextQuestion(): Question = IDLE
+            override fun validationAnswer(userAnswer:String): Boolean {
+                Log.d("M_Bender", "validationAnswer: $answer")
+
+                return false
+            }
         };
 
         abstract fun nextQuestion():Question
+        abstract fun validationAnswer(userAnswer: String):Boolean
     }
 }
