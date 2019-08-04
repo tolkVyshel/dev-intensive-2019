@@ -4,15 +4,15 @@ import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.provider.ContactsContract
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_profile_constrait.*
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
@@ -34,6 +34,59 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile_constrait)
         initViews(savedInstanceState)
         initViewModel()
+
+
+//вешаю слушатель на едиттекст и проверяю вводимый текст регулярками
+        et_repository.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(inputText: CharSequence, start: Int,
+                                       before: Int, count: Int) {
+                if(checkRepositoryInput(inputText.toString()))  wr_repository.error = null
+
+                else  wr_repository.error  = "Невалидный адрес репозитория"
+
+
+
+            }
+        })
+
+
+    }
+
+    private fun checkRepositoryInput(repo: String): Boolean {
+
+        Log.d("M_ProfileActivity", "github repo: $repo")
+        var reg: Regex = Regex("""(https://)?(www\.)?github.com/[a-zA-Z0-9-\-]+(/)?""")
+        if (repo == "" || reg.matches(repo)) {
+            Log.d("M_ProfileActivity", "Репозиторий Валидный по Регулярке")
+
+
+            listOfException.forEach {
+                var reg2 = Regex(""".*/$it[/]?$.*""")
+                if (reg2.matches(repo)) {
+                    Log.d("M_ProfileActivity", "Репозиторий содержит исключения")
+
+                    return false
+                }
+            }
+
+            return true
+        }
+        return false
+        /*   else
+        {
+            Log.d("M_ProfileActivity", "matches false")
+            wr_repository.error  = "Невалидный адрес репозитория"
+        }*/
+
+
     }
 
     private fun initViewModel() {
@@ -112,11 +165,21 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileInfo(){
+       var  saveRepo: String
+        Log.d("M_ProfileActivity", "wr_repository.error: ${wr_repository.error}")
+        if (wr_repository.error == null) saveRepo = et_repository.text.toString()
+        else {
+            saveRepo = ""
+            et_repository.text!!.clear() //очищаю edittext
+            wr_repository.error = null //сбрасываю ошибку
+
+
+        }
         Profile(
             firstName = et_first_name.text.toString(),
             lastName = et_last_name.text.toString(),
             about = et_about.text.toString(),
-            repository = et_repository.text.toString()
+            repository =   saveRepo
         ).apply {
             viewModel.saveProfileData(this)
         }
@@ -126,4 +189,19 @@ class ProfileActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState?.putBoolean(IS_EDIT_MODE, isEditMode)
     }
+    val listOfException = listOf<String>(
+        "enterprise",
+        "features",
+        "topics",
+        "collections",
+        "trending",
+        "events",
+        "marketplace",
+        "pricing",
+        "nonprofit",
+        "customer-stories",
+        "security",
+        "login",
+        "join"
+    )
 }

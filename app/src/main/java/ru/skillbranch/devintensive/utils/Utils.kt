@@ -52,7 +52,7 @@ object Utils {
 
         )
         //перебираем строку как массив символов
-        payload.forEach { letter ->
+        payload.trim().forEach { letter ->
 
            if (letter.toString().toLowerCase() in dictionary.keys) {
                var translateLetter = dictionary.getValue(letter.toLowerCase().toString())
