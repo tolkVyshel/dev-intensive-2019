@@ -1,12 +1,12 @@
 package ru.skillbranch.devintensive.ui.profile
 
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -15,7 +15,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile_constrait.*
 import ru.skillbranch.devintensive.R
+import ru.skillbranch.devintensive.extensions.getInitAvatar
 import ru.skillbranch.devintensive.models.Profile
+import ru.skillbranch.devintensive.utils.Utils
+import ru.skillbranch.devintensive.utils.Utils.toInitials
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
@@ -94,18 +97,43 @@ class ProfileActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
         viewModel.getProfileData().observe(this, Observer { updateUI(it) })
         viewModel.getTheme().observe(this, Observer { updateTheme(it) })
+      //  viewModel.getProfileData().observe(this, Observer { updateDrawable(it) })
     }
 
     private fun updateTheme(mode: Int) {
         delegate.setLocalNightMode(mode)
+       // updateDrawable(viewModel.getProfileData().value)
+    }
+
+    private fun updateAvatar(profile: Profile) {
+        toInitials(profile.firstName, profile.lastName)?.let { iv_avatar.setImageDrawable(getInitAvatar(it)) }
+            ?: iv_avatar.setImageResource(R.drawable.avatar_default)
+    }
+
+    private fun updateDrawable(profile: Profile?){
+
+        val initials = Utils.toInitials(profile?.firstName, profile?.lastName)
+        val drawable = if (initials==null) {
+            resources.getDrawable(R.drawable.ic_avatar, theme)
+        } else {
+            val color = TypedValue()
+            theme.resolveAttribute(R.attr.colorAccent, color, true)
+            ColorDrawable(color.data)
+        }
+        iv_avatar.setImageDrawable(drawable)
+       // iv_avatar.text = initials
+
     }
 
     private fun updateUI(profile: Profile) {
+       // updateDrawable(profile)
+
         profile.toMap().also {
             for ((k, v) in viewFields) {
                 v.text = it[k].toString()
             }
         }
+        updateAvatar(profile)
     }
 
     private fun initViews(savedInstanceState: Bundle?) {
@@ -145,6 +173,7 @@ class ProfileActivity : AppCompatActivity() {
             v.isEnabled = isEdit
             v.background.alpha = if (isEdit) 255 else 0
         }
+        iv_avatar
 
         ic_eye.visibility = if (isEdit) View.GONE else View.VISIBLE
         wr_about.isCounterEnabled = isEdit

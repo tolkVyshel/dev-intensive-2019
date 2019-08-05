@@ -11,10 +11,11 @@
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintDimensionRatio="16:9"
             android:scaleType="centerCrop"
     />
-    <ImageView
+    <ru.skillbranch.devintensive.ui.custom.CircleImageView
             android:layout_width="@dimen/avatar_round_size"
             android:layout_height="@dimen/avatar_round_size" app:srcCompat="@drawable/avatar_default"
             android:id="@+id/iv_avatar"
+
             app:layout_constraintStart_toStartOf="@+id/imageView" app:layout_constraintEnd_toEndOf="parent"
 
             android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
