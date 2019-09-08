@@ -15,7 +15,7 @@ import ru.skillbranch.devintensive.R
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class CircleImageView @JvmOverloads constructor(
+open class CircleImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

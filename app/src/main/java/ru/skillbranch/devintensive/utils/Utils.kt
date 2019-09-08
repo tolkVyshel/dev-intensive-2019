@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.utils
 
+import android.content.res.Resources
+
 object Utils {
     fun parseFullName(fullName: String?): Pair<String?, String?> {
 
@@ -105,9 +107,11 @@ object Utils {
 
         return inintials
     }
+    fun convertDpToPx(dp : Float) = (dp * Resources.getSystem().displayMetrics.density).toInt()
+    fun convertPxToDp(px : Int) = (px / Resources.getSystem().displayMetrics.density).toInt()
+    fun convertSpToPx(sp: Int) = (sp * Resources.getSystem().displayMetrics.scaledDensity)
 
 }
-
 
 
 

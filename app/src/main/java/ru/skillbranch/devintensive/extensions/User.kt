@@ -1,5 +1,5 @@
 import ru.skillbranch.devintensive.extensions.humanizeDiff
-import ru.skillbranch.devintensive.models.User
+import ru.skillbranch.devintensive.models.data.User
 import ru.skillbranch.devintensive.models.UserView
 import ru.skillbranch.devintensive.utils.Utils
 

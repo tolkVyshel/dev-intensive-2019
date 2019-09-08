@@ -2,6 +2,7 @@ package ru.skillbranch.devintensive.extensions
 
 
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.util.*
 import kotlin.math.abs
 
@@ -124,6 +125,7 @@ enum class TimeUnits {
       }
   }
 }
+
 fun humanMinutes(interval: Long, isNegative: Boolean = false): String {
     //минуту назад, через минуту
     //2 минуты назад, через 2 минуты
@@ -148,4 +150,15 @@ fun humanMinutes(interval: Long, isNegative: Boolean = false): String {
     else "$humanMinutesInterval назад"
 }
 
+fun Date.shortFormat(): String? {
+    val pattern = if (this.issSameDay(Date())) "HH:mm" else "dd.MM.yy"
+    val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
+    return dateFormat.format(this)
+}
 
+fun Date.issSameDay(date: Date) : Boolean {
+    val day1 = this.time/ DAY
+    val day2 = date.time/ DAY
+    return day1 == day2
+
+}
