@@ -168,9 +168,8 @@ inner class ArchiveViewHolder(convertView: View) : ChatItemViewHolder(convertVie
 
             tv_message_archive.text = item.shortDescription
             with(tv_message_author_archive) {
-                //                visibility = if (item.messageCount > 0) View.VISIBLE else View.GONE
-               // todo()
-                // text = resources.getString(R.string.archive_author_string, item.author)
+                visibility = if (item.messageCount > 0) View.VISIBLE else View.GONE
+                text = item.author
             }
 
             itemView.setOnClickListener {

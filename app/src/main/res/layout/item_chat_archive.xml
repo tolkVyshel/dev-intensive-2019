@@ -50,7 +50,7 @@
             android:layout_below="@id/tv_title_archive"
             android:textColor="?attr/colorText"
             android:textSize="14sp"
-            tools:text="some message" />
+            tools:text="arch some message" />
 
     <TextView
             android:id="@+id/tv_date_archive"
