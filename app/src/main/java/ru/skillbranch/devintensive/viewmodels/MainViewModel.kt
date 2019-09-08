@@ -2,6 +2,7 @@ package ru.skillbranch.devintensive.viewmodels
 
 import android.provider.ContactsContract
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import ru.skillbranch.devintensive.data.managers.CacheManager.chats
@@ -23,9 +24,21 @@ class MainViewModel: ViewModel() {
 
 
     fun getChatData(): LiveData<List<ChatItem>> {
-        return chats
 
+        val result = MediatorLiveData<List<ChatItem>>()
 
+        val filterF = {
+            val queryStr = query.value!!
+            val chats = chats.value!!
+
+            result.value = if (queryStr.isEmpty()) chats
+            else chats.filter { it.title.contains(queryStr, true) }
+        }
+
+        result.addSource(chats) { filterF.invoke() }
+        result.addSource(query) { filterF.invoke() }
+
+        return result
     }
 
   /* private fun loadChats(): List<ChatItem> {

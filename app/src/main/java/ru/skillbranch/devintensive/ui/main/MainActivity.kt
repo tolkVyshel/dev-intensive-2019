@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
     private fun initToolbar() {
         //  val toolbar = findViewById<Toolbar>(R.layout.activity_main)
-        setActionBar(toolbar)
+        setSupportActionBar(toolbar)
 
     }
 
