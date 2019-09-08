@@ -154,7 +154,7 @@ class ChatAdapter(val listener: (ChatItem) -> Unit) : RecyclerView.Adapter<ChatA
         }
     }
 
- inner class ArchiveViewHolder(convertView: View) : ChatItemViewHolder(convertView) {
+inner class ArchiveViewHolder(convertView: View) : ChatItemViewHolder(convertView) {
         override fun bind(item: ChatItem, listener: (ChatItem) -> Unit) {
             with(tv_date_archive) {
                 visibility = if (item.lastMessageDate != null) View.VISIBLE else View.GONE
